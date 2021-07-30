@@ -250,7 +250,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
       <ScrollToTopOnMount />
 
       <div className="row">
-        <div className="col-lg-4">
+        <div className="col-lg-6">
           <SectionHeading text={t('public~Container details')} />
           <dl className="co-m-pane__details">
             <dt>{t('public~State')}</dt>
@@ -302,7 +302,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
           </dl>
         </div>
 
-        <div className="col-lg-4">
+        <div className="col-lg-6">
           <SectionHeading text={t('public~Image details')} />
           <dl className="co-m-pane__details">
             <dt>{t('public~Image')}</dt>
@@ -336,7 +336,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
           </dl>
         </div>
 
-        <div className="col-lg-4">
+        <div className="col-lg-6">
           <SectionHeading text={t('public~Network')} />
           <dl className="co-m-pane__details">
             <dt>{t('public~Node')}</dt>
@@ -351,28 +351,28 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 
       <hr />
 
-      <div className="row">
-        <div className="col-lg-4">
+      <>
+        <div className="co-m-pane__body">
           <SectionHeading text={t('public~Ports')} />
           <div className="co-table-container">
             <Ports ports={container.ports} />
           </div>
         </div>
 
-        <div className="col-lg-4">
+        <div className="co-m-pane__body">
           <SectionHeading text={t('public~Mounted volumes')} />
           <div className="co-table-container">
             <VolumeMounts volumeMounts={container.volumeMounts} />
           </div>
         </div>
 
-        <div className="col-lg-4">
+        <div className="co-m-pane__body">
           <SectionHeading text={t('public~Environment variables')} />
           <div className="co-table-container">
             <Env env={container.env} />
           </div>
         </div>
-      </div>
+      </>
     </div>
   );
 };
