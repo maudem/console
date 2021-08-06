@@ -111,14 +111,14 @@ const CreateNamespaceModalWithTranslation = connect(
     }
 
     render() {
-      const { t } = this.props;
+      const { t, createProject } = this.props;
       const defaultNetworkPolicies = {
         [allow]: t('public~No restrictions'),
         [deny]: t('public~Deny all inbound traffic'),
       };
 
       const popoverText = () => {
-        const type = this.props.createProject ? t('public~Project') : t('public~Namespace');
+        const type = createProject ? t('public~Project') : t('public~Namespace');
         const nameFormat = t(
           "public~A {{type}} name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
           { type },
@@ -129,10 +129,33 @@ const CreateNamespaceModalWithTranslation = connect(
         return (
           <>
             <p>{nameFormat}</p>
-            {this.props.createProject ? <p>{createNamespace}</p> : null}
+            {createProject ? <p>{createNamespace}</p> : null}
           </>
         );
       };
+
+      const popoverDescriptionText = (
+        <>
+          <p>
+            <strong>{t('public~OpenShift Projects and Kubernetes Namespaces')}</strong>
+          </p>
+          <p>
+            {t(
+              'public~Projects are exposed as editable to end users while namespaces are not. Direct creation of a project is typically restricted to administrators, while end users should use the requestproject resource.',
+            )}
+          </p>
+          <p>
+            <a
+              className="co-external-link"
+              href="https://docs.openshift.com/online/pro/architecture/core_concepts/projects_and_users.html"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {t('public~Learn more about OpenShift Projects and Namespaces')}
+            </a>
+          </p>
+        </>
+      );
       return (
         <form
           onSubmit={this._submit.bind(this)}
@@ -140,9 +163,29 @@ const CreateNamespaceModalWithTranslation = connect(
           className="modal-content modal-content--no-inner-scroll"
         >
           <ModalTitle>
-            {this.props.createProject ? t('public~Create Project') : t('public~Create Namespace')}
+            {createProject ? t('public~Create Project') : t('public~Create Namespace')}
           </ModalTitle>
           <ModalBody>
+            <p>
+              {createProject
+                ? t(
+                    'public~An OpenShift project is an alternative representation of a Kubernetes namespace.',
+                  )
+                : t(
+                    'public~A Kubernetes namespace is an alternative representation of an OpenShift project.',
+                  )}
+              <Popover
+                aria-label="OpenShift project and Kubernetes namespace description"
+                bodyContent={popoverDescriptionText}
+              >
+                <Button
+                  variant="plain"
+                  aria-label="View OpenShift project and Kubernetes namespace description"
+                >
+                  <OutlinedQuestionCircleIcon />
+                </Button>
+              </Popover>
+            </p>
             <div className="form-group">
               <label htmlFor="input-name" className="control-label co-required">
                 {t('public~Name')}
@@ -166,7 +209,7 @@ const CreateNamespaceModalWithTranslation = connect(
                 />
               </div>
             </div>
-            {this.props.createProject && (
+            {createProject && (
               <div className="form-group">
                 <label htmlFor="input-display-name" className="control-label">
                   {t('public~Display name')}
@@ -183,7 +226,7 @@ const CreateNamespaceModalWithTranslation = connect(
                 </div>
               </div>
             )}
-            {this.props.createProject && (
+            {createProject && (
               <div className="form-group">
                 <label htmlFor="input-description" className="control-label">
                   {t('public~Description')}
@@ -199,7 +242,7 @@ const CreateNamespaceModalWithTranslation = connect(
                 </div>
               </div>
             )}
-            {!this.props.createProject && (
+            {!createProject && (
               <div className="form-group">
                 <label htmlFor="tags-input" className="control-label">
                   {t('public~Labels')}
@@ -213,7 +256,7 @@ const CreateNamespaceModalWithTranslation = connect(
                 </div>
               </div>
             )}
-            {!this.props.createProject && (
+            {!createProject && (
               <div className="form-group">
                 <label htmlFor="network-policy" className="control-label">
                   {t('public~Default network policy')}
