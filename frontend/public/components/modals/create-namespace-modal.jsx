@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Popover, Button } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
+import { ExternalLink } from '@console/internal/components/utils';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
@@ -145,14 +146,9 @@ const CreateNamespaceModalWithTranslation = connect(
             )}
           </p>
           <p>
-            <a
-              className="co-external-link"
-              href="https://docs.openshift.com/online/pro/architecture/core_concepts/projects_and_users.html"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <ExternalLink href="https://docs.openshift.com/online/pro/architecture/core_concepts/projects_and_users.html">
               {t('public~Learn more about OpenShift Projects and Namespaces')}
-            </a>
+            </ExternalLink>
           </p>
         </>
       );
