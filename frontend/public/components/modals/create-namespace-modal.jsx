@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Popover, Button } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
@@ -135,23 +135,22 @@ const CreateNamespaceModalWithTranslation = connect(
         );
       };
 
-      const popoverDescriptionText = (
-        <>
-          <p>
-            <strong>{t('public~OpenShift Projects and Kubernetes Namespaces')}</strong>
-          </p>
-          <p>
-            {t(
-              'public~Projects are exposed as editable to end users while namespaces are not. Direct creation of a project is typically restricted to administrators, while end users should use the requestproject resource.',
-            )}
-          </p>
-          <p>
-            <ExternalLink href="https://docs.openshift.com/online/pro/architecture/core_concepts/projects_and_users.html">
-              {t('public~Learn more about OpenShift Projects and Namespaces')}
-            </ExternalLink>
-          </p>
-        </>
-      );
+      // const popoverDescriptionText = (
+      //   <>
+      //     <p>
+      //       <strong>{t('public~OpenShift Projects and Kubernetes Namespaces')}</strong>
+      //     </p>
+      //     <p>
+      //       {t('public~Projects are exposed as editable to end users while namespaces are not. Direct creation of a project is typically restricted to administrators, while end users should use the requestproject resource.',
+      //       )}
+      //     </p>
+      //     <p>
+      //       <ExternalLink href={`${openshiftHelpBase}applications/projects/working-with-projects.html`}>
+      //         {t('public~Learn more about working with projects')}
+      //       </ExternalLink>
+      //     </p>
+      //   </>
+      // );
       return (
         <form
           onSubmit={this._submit.bind(this)}
@@ -162,26 +161,23 @@ const CreateNamespaceModalWithTranslation = connect(
             {createProject ? t('public~Create Project') : t('public~Create Namespace')}
           </ModalTitle>
           <ModalBody>
-            <p>
-              {createProject
-                ? t(
+            {createProject && FLAGS.OPENSHIFT === 'OPENSHIFT' ? (
+              <>
+                <p>
+                  {t(
                     'public~An OpenShift project is an alternative representation of a Kubernetes namespace.',
-                  )
-                : t(
-                    'public~A Kubernetes namespace is an alternative representation of an OpenShift project.',
                   )}
-              <Popover
-                aria-label="OpenShift project and Kubernetes namespace description"
-                bodyContent={popoverDescriptionText}
-              >
-                <Button
-                  variant="plain"
-                  aria-label="View OpenShift project and Kubernetes namespace description"
-                >
-                  <OutlinedQuestionCircleIcon />
-                </Button>
-              </Popover>
-            </p>
+                </p>
+                <p>
+                  <ExternalLink
+                    href={`${openshiftHelpBase}applications/projects/working-with-projects.html`}
+                  >
+                    {t('public~Learn more about working with projects')}
+                  </ExternalLink>
+                </p>
+              </>
+            ) : null}
+
             <div className="form-group">
               <label htmlFor="input-name" className="control-label co-required">
                 {t('public~Name')}
