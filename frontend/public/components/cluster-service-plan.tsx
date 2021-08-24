@@ -1,14 +1,9 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { K8sResourceKind, referenceForModel, servicePlanDisplayName } from '../module/k8s';
-import {
-  ClusterServicePlanModel,
-  ClusterServiceBrokerModel,
-  ClusterServiceClassModel,
-} from '../models';
+import { ClusterServicePlanModel } from '../models';
 import { viewYamlComponent } from './utils/horizontal-nav';
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md'];
@@ -26,12 +21,6 @@ const ClusterServicePlanTableHeader = () => {
       sortField: 'spec.externalName',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Broker',
-      sortField: 'spec.clusterServiceBrokerName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
     },
   ];
 };
@@ -53,13 +42,6 @@ const ClusterServicePlanTableRow: RowFunction<K8sResourceKind> = ({
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{servicePlan.spec.externalName}</TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        <ResourceLink
-          kind={referenceForModel(ClusterServiceBrokerModel)}
-          name={servicePlan.spec.clusterServiceBrokerName}
-          title={servicePlan.spec.clusterServiceBrokerName}
-        />
-      </TableData>
     </TableRow>
   );
 };
@@ -78,20 +60,6 @@ const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({
           <dl className="co-m-pane__details">
             <dt>Description</dt>
             <dd>{servicePlan.spec.description}</dd>
-            <dt>Broker</dt>
-            <dd>
-              <ResourceLink
-                kind={referenceForModel(ClusterServiceBrokerModel)}
-                name={servicePlan.spec.clusterServiceBrokerName}
-              />
-            </dd>
-            <dt>Service Class</dt>
-            <dd>
-              <ResourceLink
-                kind={referenceForModel(ClusterServiceClassModel)}
-                name={servicePlan.spec.clusterServiceClassRef.name}
-              />
-            </dd>
             {servicePlan.status.removedFromBrokerCatalog && (
               <>
                 <dt>Removed From Catalog</dt>
