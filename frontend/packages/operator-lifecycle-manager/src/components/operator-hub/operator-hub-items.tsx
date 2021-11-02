@@ -22,6 +22,7 @@ import {
   GreenCheckCircleIcon,
   Modal,
   useUserSettingsCompatibility,
+  isModifiedEvent,
 } from '@console/shared';
 import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
 import { SubscriptionModel } from '../../models';
@@ -321,14 +322,16 @@ const setURLParams = (params) => {
   const searchParams = `?${params.toString()}${url.hash}`;
 
   history.replace(`${url.pathname}${searchParams}`);
+  // eslint-disable-next-line no-console
+  console.log('mbm searchParams', searchParams);
 };
 
-const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
+const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick, href }) => {
   const { t } = useTranslation();
   if (!item) {
     return null;
   }
-
+  // const overlayURL =
   const { uid, name, imgUrl, provider, description, installed } = item;
   const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
   const badges = item?.catalogSourceDisplayName
@@ -343,6 +346,15 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
     />
   );
 
+  // const getURLWithParams = (params) => {
+  //   // const params = new URLSearchParams(window.location.search);
+  //   const url = new URL(window.location.href);
+
+  //   const searchParams = `?${params.toString()}${url.hash}`;
+  //   const href = `${url.pathname}${searchParams}1`
+  //   return href`;
+  // };
+
   return (
     <CatalogTile
       className="co-catalog-tile"
@@ -352,7 +364,18 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       icon={icon}
       vendor={vendor}
       description={description}
-      onClick={() => onClick(item)}
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        if (isModifiedEvent(e)) return;
+        e.preventDefault();
+        if (onClick) {
+          onClick(item);
+        } else if (href) {
+          // eslint-disable-next-line no-console
+          console.log('mbm href', href);
+          history.push(href);
+        }
+      }}
+      // href={href}
       footer={
         installed && !item.isInstalling ? (
           <span>
@@ -411,14 +434,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       const params = new URLSearchParams(window.location.search);
       params.set('details-item', item.uid);
       setURLParams(params);
+      // eslint-disable-next-line no-console
+      console.log('mbm params', params);
       setDetailsItem(item);
       setShowDetails(true);
     }
   };
-
-  const renderTile = (item: OperatorHubItem) => (
-    <OperatorHubTile item={item} onClick={openOverlay} />
-  );
 
   const createLink =
     detailsItem &&
@@ -427,6 +448,10 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const uninstallLink = () =>
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+
+  const renderTile = (item: OperatorHubItem) => (
+    <OperatorHubTile item={item} onClick={openOverlay} href={createLink} />
+  );
 
   const remoteWorkflowUrl = React.useMemo(() => {
     if (detailsItem?.marketplaceRemoteWorkflow) {
@@ -484,6 +509,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         filterGroupNameMap={filterGroupNameMap}
         keywordCompare={keywordCompare}
         renderTile={renderTile}
+        href={createLink}
         emptyStateTitle={t('olm~No Results Match the Filter Criteria')}
         emptyStateInfo={t(
           'olm~No OperatorHub items are being shown due to the filters being applied.',
@@ -565,6 +591,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 type OperatorHubTileProps = {
   item: OperatorHubItem;
   onClick: (item: OperatorHubItem) => void;
+  href?: string; // not sure if this is right
 };
 
 export type OperatorHubTileViewProps = {
